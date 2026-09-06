@@ -1,0 +1,213 @@
+/* 唐揚げ防衛隊 - スタイル */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #05070d; }
+body { font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif; color: #e8ecf4; }
+
+#game-canvas { display: block; width: 100%; height: 100%; }
+
+#crosshair {
+  position: fixed; left: 50%; top: 50%;
+  width: 22px; height: 22px;
+  transform: translate(-50%, -50%);
+  pointer-events: none; z-index: 20;
+}
+#crosshair::before, #crosshair::after {
+  content: ""; position: absolute; background: rgba(255, 210, 122, 0.9);
+}
+#crosshair::before { left: 50%; top: 0; width: 2px; height: 100%; transform: translateX(-50%); }
+#crosshair::after { top: 50%; left: 0; height: 2px; width: 100%; transform: translateY(-50%); }
+
+#hud {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  padding: 14px 18px;
+  display: none;
+  pointer-events: none; z-index: 30;
+  background: linear-gradient(transparent, rgba(5, 8, 16, 0.75));
+}
+.hud-row { display: flex; align-items: center; gap: 14px; margin-top: 8px; }
+.hud-label { font-size: 13px; letter-spacing: 0.1em; color: #9fb0cc; min-width: 86px; }
+.bar { flex: 1; max-width: 340px; height: 14px; background: rgba(255,255,255,0.12); border-radius: 7px; overflow: hidden; }
+.bar > div { height: 100%; width: 100%; transition: width 0.15s linear; }
+#hp-fill { background: #4caf50; }
+#base-fill { background: #ffb300; }
+
+#ammo { font-size: 26px; font-weight: 700; color: #ffd27a; min-width: 120px; }
+#score, #wave, #left { font-size: 16px; color: #cdd8f0; }
+.hud-right { margin-left: auto; display: flex; gap: 22px; align-items: baseline; }
+.hud-right b { color: #fff; font-size: 20px; }
+
+#msg {
+  position: fixed; top: 12%; left: 50%; transform: translateX(-50%);
+  font-size: 34px; font-weight: 800; letter-spacing: 0.14em;
+  color: #ffd27a; text-shadow: 0 0 18px rgba(255, 160, 40, 0.55), 0 2px 6px #000;
+  white-space: nowrap; opacity: 0; transition: opacity 0.4s;
+  pointer-events: none; z-index: 40;
+}
+
+#mute {
+  position: fixed; top: 12px; right: 16px;
+  font-size: 13px; color: #9fb0cc; opacity: 0; transition: opacity 0.5s;
+  pointer-events: none; z-index: 40;
+}
+
+/* 画面 */
+.screen {
+  position: fixed; inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center; justify-content: center;
+  z-index: 50;
+  background: rgba(4, 7, 14, 0.85);
+  text-align: center;
+  padding: 20px;
+}
+.screen.show { display: flex; }
+#title-screen {
+  background: linear-gradient(rgba(4,7,14,0.35), rgba(4,7,14,0.88)),
+    url("../assets/bg_title.png") center/cover no-repeat;
+}
+.title-main {
+  font-size: 68px; font-weight: 900; letter-spacing: 0.16em;
+  color: #ffd27a;
+  text-shadow: 0 0 26px rgba(255,160,40,0.6), 0 3px 10px #000;
+}
+.title-sub { margin-top: 12px; font-size: 17px; letter-spacing: 0.34em; color: #9fb0cc; }
+.title-desc { margin-top: 30px; font-size: 15px; line-height: 2; color: #cdd8f0; }
+.title-desc b { color: #ffd27a; }
+.btn {
+  margin-top: 36px;
+  padding: 14px 54px;
+  font-size: 20px; font-weight: 800; letter-spacing: 0.22em;
+  color: #1a1206;
+  background: linear-gradient(#ffd27a, #ff9d3a);
+  border: none; border-radius: 8px; cursor: pointer;
+  box-shadow: 0 0 24px rgba(255,160,40,0.45);
+}
+.btn:hover { filter: brightness(1.12); }
+.result-msg { font-size: 32px; font-weight: 900; letter-spacing: 0.12em; color: #ff6b5e; text-shadow: 0 0 18px rgba(255,60,40,0.5), 0 2px 6px #000; }
+#victory-screen .result-msg { color: #7ad7ff; text-shadow: 0 0 18px rgba(80,180,255,0.55), 0 2px 6px #000; }
+.result-score { margin-top: 20px; font-size: 18px; color: #cdd8f0; }
+.result-score b { color: #ffd27a; font-size: 36px; margin-left: 8px; }
+.pause-title { font-size: 40px; font-weight: 900; letter-spacing: 0.3em; color: #cdd8f0; }
+
+/* DP チップ */
+.dp-chip { font-size: 16px; color: #9fd8ff; background: rgba(46,127,214,0.22); border: 1px solid rgba(122,223,255,0.5); border-radius: 6px; padding: 2px 10px; }
+.dp-chip b { color: #7adfff; font-size: 18px; }
+
+/* 準備フェーズ (青基調) */
+#prep-screen { background: rgba(4, 10, 22, 0.55); }
+.prep-panel {
+  width: min(880px, 94vw);
+  background: linear-gradient(160deg, rgba(10,24,46,0.92), rgba(6,14,30,0.92));
+  border: 1px solid rgba(122,223,255,0.45);
+  border-radius: 14px;
+  padding: 26px 30px 30px;
+  box-shadow: 0 0 44px rgba(46,127,214,0.35), inset 0 0 30px rgba(46,127,214,0.12);
+}
+.prep-title { font-size: 30px; font-weight: 900; letter-spacing: 0.18em; color: #7adfff; text-shadow: 0 0 18px rgba(80,180,255,0.5); }
+.prep-dp { margin-top: 10px; font-size: 18px; color: #cdd8f0; }
+.prep-dp b { color: #7adfff; font-size: 26px; margin-left: 6px; }
+.prep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
+.upg-card {
+  background: rgba(46,127,214,0.14);
+  border: 1px solid rgba(122,223,255,0.4);
+  border-radius: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s, transform 0.08s;
+}
+.upg-card:hover { background: rgba(46,127,214,0.32); transform: translateY(-2px); }
+.upg-card.disabled { opacity: 0.45; cursor: not-allowed; }
+.upg-card.maxed { opacity: 0.7; cursor: default; border-color: rgba(122,223,255,0.7); background: rgba(46,127,214,0.24); }
+.upg-name { font-size: 18px; font-weight: 800; letter-spacing: 0.08em; color: #eaf6ff; }
+.upg-lv { font-size: 12px; color: #7adfff; letter-spacing: 0.14em; margin-top: 2px; }
+.upg-desc { font-size: 13px; color: #b9d4f2; margin-top: 6px; line-height: 1.5; }
+.upg-cost { font-size: 15px; font-weight: 700; color: #ffd27a; margin-top: 6px; }
+.btn-prep {
+  width: 100%;
+  margin-top: 22px;
+  background: linear-gradient(#7adfff, #2e7fd6);
+  color: #04121f;
+  box-shadow: 0 0 26px rgba(46,127,214,0.55);
+}
+.btn-prep:hover { filter: brightness(1.1); }
+
+/* ===== タッチ操作 UI ===== */
+.touch-only { display: none; }
+body.touch .touch-only { display: inline; }
+#game-canvas { touch-action: none; }
+body.touch #crosshair { width: 10px; height: 10px; background: rgba(255, 210, 122, 0.85); border-radius: 50%; }
+body.touch #crosshair::before, body.touch #crosshair::after { display: none; }
+#touch-ui { display: none; position: fixed; inset: 0; pointer-events: none; z-index: 35; }
+body.touch #touch-ui { display: block; }
+
+#joy-base {
+  position: fixed;
+  width: 112px; height: 112px;
+  border-radius: 50%;
+  border: 2px solid rgba(122, 223, 255, 0.55);
+  background: rgba(46, 127, 214, 0.14);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s;
+}
+#joy-knob {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 48px; height: 48px;
+  margin: -24px 0 0 -24px;
+  border-radius: 50%;
+  background: rgba(122, 223, 255, 0.5);
+  border: 2px solid rgba(234, 246, 255, 0.8);
+  box-shadow: 0 0 14px rgba(46, 127, 214, 0.6);
+}
+
+.touch-btn {
+  pointer-events: auto;
+  touch-action: none;
+  -webkit-user-select: none; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 50%;
+  border: 2px solid rgba(122, 223, 255, 0.6);
+  color: #eaf6ff;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  font-family: inherit;
+}
+#btn-fire {
+  position: fixed;
+  right: 22px; bottom: 132px;
+  width: 92px; height: 92px;
+  font-size: 16px;
+  background: rgba(229, 57, 53, 0.30);
+}
+#btn-fire.on {
+  background: rgba(229, 57, 53, 0.75);
+  border-color: #ffd27a;
+  box-shadow: 0 0 22px rgba(255, 120, 60, 0.7);
+  color: #fff;
+}
+#btn-pause {
+  position: fixed;
+  right: 16px; top: 12px;
+  width: 52px; height: 52px;
+  font-size: 18px;
+  background: rgba(46, 127, 214, 0.25);
+}
+
+/* モバイル: HUDをコンパクトに */
+@media (max-width: 700px) {
+  #hud { padding: 10px 12px; }
+  .hud-row { gap: 8px; margin-top: 4px; }
+  .hud-label { font-size: 11px; min-width: 64px; }
+  #ammo { font-size: 18px; min-width: 84px; }
+  .hud-right { gap: 10px; font-size: 12px; }
+  .dp-chip { font-size: 13px; }
+  .title-desc { font-size: 13px; }
+  .title-main { font-size: 40px !important; }
+  .prep-grid { grid-template-columns: 1fr; gap: 10px; }
+  .prep-panel { padding: 18px 16px 22px; }
+  .prep-title { font-size: 22px; }
+  .upg-name { font-size: 15px; }
+}

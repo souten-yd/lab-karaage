@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>唐揚げ防衛隊 - Karaage Defense</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<canvas id="game-canvas"></canvas>
+<div id="crosshair"></div>
+
+<div id="touch-ui">
+  <div id="joy-base"><div id="joy-knob"></div></div>
+  <button type="button" id="btn-fire" class="touch-btn touch-fire">射撃 OFF</button>
+  <button type="button" id="btn-pause" class="touch-btn touch-pause">❚❚</button>
+</div>
+
+<div id="hud">
+  <div class="hud-row">
+    <span class="hud-label">防衛官 HP</span>
+    <div class="bar"><div id="hp-fill"></div></div>
+  </div>
+  <div class="hud-row">
+    <span class="hud-label">フライパン耐久</span>
+    <div class="bar"><div id="base-fill"></div></div>
+  </div>
+  <div class="hud-row">
+    <span id="ammo"></span>
+    <div class="hud-right">
+      <span id="wave"></span>
+      <span>残り <b id="left"></b></span>
+      <span>スコア <b id="score"></b></span>
+      <span class="dp-chip">DP <b id="dp">0</b></span>
+    </div>
+  </div>
+</div>
+
+<div id="msg"></div>
+<div id="mute"></div>
+
+<div class="screen" id="title-screen">
+  <div class="title-main">唐揚げ防衛隊</div>
+  <div class="title-sub">KARAAGE DEFENSE SQUAD</div>
+  <div class="title-desc">
+    深夜、街の中心。<br>
+    巨大フライパンにのせた<b>至高の唐揚げ</b>を狙って、怪獣群が迫る。<br>
+    <b>タレスプリンカー</b>で近づいた敵をコーティングし、弱点を突け!<br><br>
+    WASD: 移動 / シフト: 疾走 / マウス: 照準 / 左クリック: 射撃 / R: リロード / M: ミュート<br>
+    <span class="touch-only">[タッチ] 左: ジョイスティックで移動 / 右: ドラッグで視点 / 右下ボタン: オートファイア切替</span>
+  </div>
+  <button class="btn" id="btn-start">出撃する</button>
+</div>
+
+<div class="screen" id="pause-screen">
+  <div class="pause-title">一時停止</div>
+  <button class="btn" id="btn-resume">続行</button>
+</div>
+
+<div class="screen prep" id="prep-screen">
+  <div class="prep-panel">
+    <div class="prep-title" id="prep-title">準備フェーズ</div>
+    <div class="prep-dp">所持 DP: <b id="prep-dp">0</b></div>
+    <div class="prep-grid">
+      <div class="upg-card" id="upg-weapon">
+        <div class="upg-name" id="upg-weapon-name">武器強化</div>
+        <div class="upg-lv" id="upg-weapon-lv">Lv0 / 2</div>
+        <div class="upg-desc" id="upg-weapon-desc">威力 +25% (12→15)</div>
+        <div class="upg-cost" id="upg-weapon-cost">300 DP</div>
+      </div>
+      <div class="upg-card" id="upg-base">
+        <div class="upg-name" id="upg-base-name">基地防御</div>
+        <div class="upg-lv" id="upg-base-lv">Lv0 / 2</div>
+        <div class="upg-desc" id="upg-base-desc">耐久+300 &amp; 修復200</div>
+        <div class="upg-cost" id="upg-base-cost">300 DP</div>
+      </div>
+      <div class="upg-card" id="upg-squad">
+        <div class="upg-name" id="upg-squad-name">隊員追加</div>
+        <div class="upg-lv" id="upg-squad-lv">Lv0 / 2</div>
+        <div class="upg-desc" id="upg-squad-desc">支援兵+1 (HP+20)</div>
+        <div class="upg-cost" id="upg-squad-cost">300 DP</div>
+      </div>
+      <div class="upg-card" id="upg-turret">
+        <div class="upg-name" id="upg-turret-name">防御タレット</div>
+        <div class="upg-lv" id="upg-turret-lv">Lv0 / 2</div>
+        <div class="upg-desc" id="upg-turret-desc">タレット+1 (追尾)</div>
+        <div class="upg-cost" id="upg-turret-cost">300 DP</div>
+      </div>
+    </div>
+    <button class="btn btn-prep" id="btn-prep-done">準備完了 (Enter)</button>
+  </div>
+</div>
+
+<div class="screen" id="gameover-screen">
+  <div class="result-msg" id="over-msg"></div>
+  <div class="result-score">スコア<b id="over-score">0</b></div>
+  <button class="btn" id="btn-restart">もう一度</button>
+</div>
+
+<div class="screen" id="victory-screen">
+  <div class="result-msg">防衛成功! 唐揚げは守り抜いた!</div>
+  <div class="result-score">スコア<b id="vic-score">0</b></div>
+  <button class="btn" id="btn-again">もう一度</button>
+</div>
+
+<script src="three.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/input.js"></script>
+<script src="js/world.js"></script>
+<script src="js/base.js"></script>
+<script src="js/enemies.js"></script>
+<script src="js/player.js"></script>
+<script src="js/main.js"></script>
+<script>
+window.addEventListener("load", function () {
+  KD.Main.boot();
+});
+</script>
+</body>
+</html>
